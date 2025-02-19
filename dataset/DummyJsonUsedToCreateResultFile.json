@@ -1,0 +1,24 @@
+{
+	"name": "DummyJsonUsedToCreateResultFile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_ablob_covidreporting_src",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "FindLatestFileInAFolder"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "dummy-file.json",
+				"folderPath": "latest-file",
+				"container": "code-samples"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

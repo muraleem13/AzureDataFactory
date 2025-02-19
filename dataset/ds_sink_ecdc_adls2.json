@@ -1,0 +1,33 @@
+{
+	"name": "ds_sink_ecdc_adls2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_covidreporting_dl",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sinkEcdcFileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().sinkEcdcFileName",
+					"type": "Expression"
+				},
+				"folderPath": "ecdc",
+				"fileSystem": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

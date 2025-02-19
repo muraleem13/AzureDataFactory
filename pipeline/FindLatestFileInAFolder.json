@@ -1,0 +1,243 @@
+{
+	"name": "FindLatestFileInAFolder",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetAllFiles",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "FolderPathToFindTheLatestFile",
+						"type": "DatasetReference",
+						"parameters": {
+							"ContainerName": {
+								"value": "@pipeline().parameters.ContainerName",
+								"type": "Expression"
+							},
+							"FolderPath": {
+								"value": "@pipeline().parameters.FolderPath",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "IterateFolder",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilteroutJSON",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilteroutJSON').output.Value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "CheckGreaterEpoch",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@greater(first(split(item().name, '-')),variables('greatestEpochVal'))",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "SetGreaterEpoch",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "greatestEpochVal",
+											"value": {
+												"value": "@first(split(item().name, '-'))",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "SetFileName",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "SetGreaterEpoch",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "latestFileName",
+											"value": {
+												"value": "@item().name",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "WriteLatestValueToJSON",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "IterateFolder",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"additionalColumns": [
+							{
+								"name": "latestFileName",
+								"value": {
+									"value": "@variables('latestFileName')",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DummyJsonUsedToCreateResultFile",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "LatestFileResult",
+						"type": "DatasetReference",
+						"parameters": {
+							"ContainerName": {
+								"value": "@pipeline().parameters.ContainerName",
+								"type": "Expression"
+							},
+							"FolderPath": {
+								"value": "@pipeline().parameters.FolderPath",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "FilteroutJSON",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetAllFiles",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetAllFiles').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@and(equals(item().type,'File'),not(endswith(item().name,'.json')))",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ContainerName": {
+				"type": "string",
+				"defaultValue": "test-sample"
+			},
+			"FolderPath": {
+				"type": "string",
+				"defaultValue": "latest-file-folder"
+			}
+		},
+		"variables": {
+			"latestFileName": {
+				"type": "String"
+			},
+			"greatestEpochVal": {
+				"type": "String",
+				"defaultValue": "0"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-10-28T16:43:51Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

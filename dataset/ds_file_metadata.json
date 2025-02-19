@@ -1,0 +1,20 @@
+{
+	"name": "ds_file_metadata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_ablob_covidreporting_src",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "githubusercontent_ecdc_file_list.json",
+				"container": "metadatafile"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
