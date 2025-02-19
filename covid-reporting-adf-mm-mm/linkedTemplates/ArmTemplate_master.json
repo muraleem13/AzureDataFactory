@@ -1,0 +1,208 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "covid-reporting-adf-mm-mm"
+		},
+		"ls_Azure_Sql_DB_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_Azure_Sql_DB'"
+		},
+		"ls_FS_Windows_OnPrem_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_FS_Windows_OnPrem'"
+		},
+		"ls_Linux_sftp_pull_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_Linux_sftp_pull'"
+		},
+		"ls_Linux_sftp_pull_privateKeyContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'privateKeyContent' of 'ls_Linux_sftp_pull'"
+		},
+		"ls_Linux_sftp_pull_passPhrase": {
+			"type": "secureString",
+			"metadata": "Secure string for 'passPhrase' of 'ls_Linux_sftp_pull'"
+		},
+		"ls_ablob_covidreporting_src_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_ablob_covidreporting_src'"
+		},
+		"ls_adls_covidreporting_dl_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_adls_covidreporting_dl'"
+		},
+		"ls_Azure_Sql_DB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "covid-mm-db.database.windows.net"
+		},
+		"ls_Azure_Sql_DB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "covid-mm-sql"
+		},
+		"ls_Azure_Sql_DB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adm"
+		},
+		"ls_FS_Windows_OnPrem_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\home//user"
+		},
+		"ls_FS_Windows_OnPrem_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "adm"
+		},
+		"ls_Linux_sftp_pull_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "letl281.pnc.int.net"
+		},
+		"ls_Linux_sftp_pull_properties_typeProperties_hostKeyFingerprint": {
+			"type": "string",
+			"defaultValue": "fff"
+		},
+		"ls_Linux_sftp_pull_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "dddd"
+		},
+		"ls_adls_covidreporting_dl_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://covidprojectmmdl.dfs.core.windows.net/"
+		},
+		"ls_http_ecdc_data_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().srcBaseURL}"
+		},
+		"trigger_Copy_Data_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/835bb469-d032-4a5f-ab1e-99d334e7a24d/resourceGroups/covid19-reporting-mm/providers/Microsoft.Storage/storageAccounts/covidprojectmm"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "covid-reporting-adf-mm-mm_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ls_Azure_Sql_DB_password": {
+						"value": "[parameters('ls_Azure_Sql_DB_password')]"
+					},
+					"ls_FS_Windows_OnPrem_password": {
+						"value": "[parameters('ls_FS_Windows_OnPrem_password')]"
+					},
+					"ls_Linux_sftp_pull_password": {
+						"value": "[parameters('ls_Linux_sftp_pull_password')]"
+					},
+					"ls_Linux_sftp_pull_privateKeyContent": {
+						"value": "[parameters('ls_Linux_sftp_pull_privateKeyContent')]"
+					},
+					"ls_Linux_sftp_pull_passPhrase": {
+						"value": "[parameters('ls_Linux_sftp_pull_passPhrase')]"
+					},
+					"ls_ablob_covidreporting_src_connectionString": {
+						"value": "[parameters('ls_ablob_covidreporting_src_connectionString')]"
+					},
+					"ls_adls_covidreporting_dl_accountKey": {
+						"value": "[parameters('ls_adls_covidreporting_dl_accountKey')]"
+					},
+					"ls_Azure_Sql_DB_properties_typeProperties_server": {
+						"value": "[parameters('ls_Azure_Sql_DB_properties_typeProperties_server')]"
+					},
+					"ls_Azure_Sql_DB_properties_typeProperties_database": {
+						"value": "[parameters('ls_Azure_Sql_DB_properties_typeProperties_database')]"
+					},
+					"ls_Azure_Sql_DB_properties_typeProperties_userName": {
+						"value": "[parameters('ls_Azure_Sql_DB_properties_typeProperties_userName')]"
+					},
+					"ls_FS_Windows_OnPrem_properties_typeProperties_host": {
+						"value": "[parameters('ls_FS_Windows_OnPrem_properties_typeProperties_host')]"
+					},
+					"ls_FS_Windows_OnPrem_properties_typeProperties_userId": {
+						"value": "[parameters('ls_FS_Windows_OnPrem_properties_typeProperties_userId')]"
+					},
+					"ls_Linux_sftp_pull_properties_typeProperties_host": {
+						"value": "[parameters('ls_Linux_sftp_pull_properties_typeProperties_host')]"
+					},
+					"ls_Linux_sftp_pull_properties_typeProperties_hostKeyFingerprint": {
+						"value": "[parameters('ls_Linux_sftp_pull_properties_typeProperties_hostKeyFingerprint')]"
+					},
+					"ls_Linux_sftp_pull_properties_typeProperties_userName": {
+						"value": "[parameters('ls_Linux_sftp_pull_properties_typeProperties_userName')]"
+					},
+					"ls_adls_covidreporting_dl_properties_typeProperties_url": {
+						"value": "[parameters('ls_adls_covidreporting_dl_properties_typeProperties_url')]"
+					},
+					"ls_http_ecdc_data_properties_typeProperties_url": {
+						"value": "[parameters('ls_http_ecdc_data_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "covid-reporting-adf-mm-mm_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'covid-reporting-adf-mm-mm_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "covid-reporting-adf-mm-mm_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"trigger_Copy_Data_properties_typeProperties_scope": {
+						"value": "[parameters('trigger_Copy_Data_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'covid-reporting-adf-mm-mm_ArmTemplate_1')]"
+			]
+		}
+	]
+}
