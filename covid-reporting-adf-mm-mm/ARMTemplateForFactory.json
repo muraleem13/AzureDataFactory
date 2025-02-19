@@ -3409,6 +3409,29 @@
 				"[concat(variables('factoryId'), '/datasets/ds_weekly_hospital_adm')]",
 				"[concat(variables('factoryId'), '/datasets/ds_daily_hospital_adm')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_wait_activity_test_airflow_trigger')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "wait_1_min",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 60
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		}
 	]
 }
