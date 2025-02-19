@@ -1,0 +1,17 @@
+{
+	"name": "pl_wait_activity_test_airflow_trigger",
+	"properties": {
+		"activities": [
+			{
+				"name": "wait_1_min",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 60
+				}
+			}
+		],
+		"annotations": []
+	}
+}
